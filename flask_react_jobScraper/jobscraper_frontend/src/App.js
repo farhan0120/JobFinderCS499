@@ -5,7 +5,7 @@ function App() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api')
+        axios.get('http://127.0.0.1:5000/api')
             .then(response => {
                 setMessage(response.data.message);
             });
