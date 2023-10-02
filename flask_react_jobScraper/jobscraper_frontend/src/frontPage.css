@@ -1,0 +1,140 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.search-group {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.2);
+    border-radius: 24px 0px 0px 24px !important;
+    padding: 6px 12px;
+    overflow: hidden;
+
+}
+
+.search-button {
+    border-radius: 0px 24px 24px 0px !important;
+    padding: 6px 16px;
+    box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.filters-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.filter-card {
+    width: 75%;
+}
+
+
+.accordion-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 20px;  /* Adds a little space between the search bar and the accordion */
+
+}
+
+.accordion-container {
+    max-width: 450px;  /* or whatever maximum width you prefer */
+    width: 110%;        /* adjust the width as needed */
+    margin-top: -50px;  /* pull the accordion up by 20 pixels; adjust the value as needed */
+
+}
+
+
+/* Table Styling */
+.table {
+    width: 80%;
+    margin: 30px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #E0E0E0;
+}
+
+/* Increasing specificity by chaining classes */
+.table-striped.table thead {
+    background-color: #4285F4;  /* Adding a Google-blue header */
+    color: white;  /* Make text white for better contrast against blue */
+}
+
+.table-striped.table thead th {
+    font-weight: 500;
+    padding: 20px;
+    text-align: left;
+}
+
+
+/* Table Body Styling */
+.table tbody tr:nth-child(odd) {   /* Color alternate rows */
+    background-color: #F7F9FD;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #E3E6EF;
+}
+
+.table tbody td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Link Styling inside Table */
+.table tbody td a {
+    color: #4285F4;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.table tbody td a:hover {
+    color: #0F66C7;
+}
+
+.custom-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4285F4;  /* Google-blue for example */
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.custom-button:hover {
+    background-color: #357ABD; /* Slightly darker shade for hover */
+    text-decoration: none;
+    color: white;
+}
+
+.custom-button:active {
+    background-color: #2F5BA6; /* Even darker shade for active state */
+}
+
+/* Ensure the text remains white even when the link is visited */
+.custom-button:visited {
+    color: white;
+}

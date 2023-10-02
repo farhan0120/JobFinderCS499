@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import CustomNavbar from './Navbar'; 
+import SearchPage from './SearchBar';
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 function App() {
     const [message, setMessage] = useState("");
@@ -13,9 +19,13 @@ function App() {
 
     return (
         <div className="App">
-            <header className="App-header">
-                <p>{message}</p>
-            </header>
+            <CustomNavbar/>
+            <Container>
+                <header className="App-header">
+                 <p>{message}</p>
+                </header>
+                <SearchPage/>
+            </Container>
         </div>
     );
 }
