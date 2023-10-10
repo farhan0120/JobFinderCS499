@@ -17,7 +17,6 @@ function SearchPage() {
     };
 
     const handleSearch = () => {
-        // Query your Flask API when search is clicked
         axios.get(`http://127.0.0.1:5000/api/search?title=${jobTitle}`)
             .then(response => {
                 setJobs(response.data);
@@ -112,7 +111,7 @@ function SearchPage() {
                             <td>{job.title}</td>
                             <td>{job.location}</td>
                             <td>{job.posted_time}</td>
-                            <td><a href={job.link} target="_blank" rel="noopener noreferrer"> Apply Here</a></td>
+                            <td><a href={job.link} target="_blank" rel="noopener noreferrer">{job.link}</a></td>
                         </tr>
                     ))}
                 </tbody>
