@@ -1,0 +1,22 @@
+2023-10-09 20:32:13,905 - root - INFO - App has been created and DB has been initialized.
+2023-10-09 20:32:13,914 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-10-09 20:32:13,914 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2023-10-09 20:32:25,256 - root - INFO - App has been created and DB has been initialized.
+2023-10-09 20:32:25,260 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-10-09 20:32:25,260 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2023-10-09 20:34:06,335 - root - INFO - App has been created and DB has been initialized.
+2023-10-09 20:34:06,344 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-10-09 20:34:06,345 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2023-10-09 20:35:40,430 - root - INFO - App has been created and DB has been initialized.
+2023-10-09 20:35:40,437 - apscheduler.scheduler - INFO - Scheduler started
+2023-10-09 20:37:10,075 - root - INFO - App has been created and DB has been initialized.
+2023-10-09 20:37:10,079 - apscheduler.scheduler - INFO - Scheduler started
+2023-10-09 20:38:04,368 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-10-09 20:38:04,376 - apscheduler.scheduler - INFO - Added job "job1" to job store "default"
+2023-10-09 20:38:04,376 - apscheduler.scheduler - INFO - Scheduler started
+2023-10-09 20:38:04,383 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-10-09 20:38:04,383 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
