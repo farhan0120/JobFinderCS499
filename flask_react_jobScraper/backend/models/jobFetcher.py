@@ -52,7 +52,7 @@ def process_indeed_data(data):
                 company_name=job['company_name'],
                 location=job['location'],
                 title=job['title'],
-                link=job['link'],
+                link=job['indeed_final_url'],
                 source='Indeed',
                 posted_time=datetime.fromtimestamp(job['pub_date_ts_milli'] / 1000),
                 # omitting optional fields for brevity
