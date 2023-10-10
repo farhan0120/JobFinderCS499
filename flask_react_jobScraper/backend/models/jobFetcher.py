@@ -59,6 +59,8 @@ def process_indeed_data(data):
             )
             db.session.add(new_job)
     db.session.commit()
+    app.logger.info("Indeed data processed and saved to the database.")
+
 
 def process_linkedin_data(data):
     jobs = data.get("data", [])
@@ -81,6 +83,8 @@ def process_linkedin_data(data):
             )
             db.session.add(new_job)
     db.session.commit()
+    app.logger.info("LinkedIn data processed and saved to the database.")
+
 
 
 def run_fetchers():

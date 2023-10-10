@@ -4,12 +4,24 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
+import axios from 'axios';
 import './frontPage.css'; 
 
 function SearchPage() {
     const [sliderValue, setSliderValue] = useState(0);
+    const [jobTitle, setJobTitle] = useState("");  // state to capture the search input
+    const [jobs, setJobs] = useState([]);  // state to store job search results
+
     const handleSliderChange = (event) => {
         setSliderValue(event.target.value);
+    };
+
+    const handleSearch = () => {
+        // Query your Flask API when search is clicked
+        axios.get(`http://127.0.0.1:5000/api/search?title=${jobTitle}`)
+            .then(response => {
+                setJobs(response.data);
+            });
     };
 
     return (
@@ -22,8 +34,10 @@ function SearchPage() {
                             type="text" 
                             placeholder="Search Job Title"
                             className="search-input"
+                            value={jobTitle}
+                            onChange={e => setJobTitle(e.target.value)}
                         />
-                    <Button variant="primary" className="search-button">
+                    <Button variant="primary" className="search-button" onClick={handleSearch}>
                         Search
                     </Button>
             </div>
@@ -85,30 +99,24 @@ function SearchPage() {
                     <th>ID</th>
                     <th>Company</th>
                     <th>Job Title</th>
+                    <th>Location</th>
+                    <th>Time Posted</th>
                     <th>Apply Link</th>
                 </tr>
             </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Google</td>
-                        <td>Software Engineer</td>
-                        <td><a href="https://www.google.com/about/careers/applications/teams/engineering-technology/" target="_blank"> Apply Here</a></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Amazon</td>
-                        <td>Software Developer</td>
-                        <td><a href="https://www.amazon.jobs/en/job_categories/software-development" target="_blank"> Apply Here</a></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Apple</td>
-                        <td>Software Developer</td>
-                        <td><a href="https://www.apple.com/careers/us/software-and-services.html" target="_blank"> Apply Here</a></td>
-                    </tr>
+                    {jobs.map(job => (
+                        <tr key={job.id}>
+                            <td>{job.id}</td>
+                            <td>{job.company}</td>
+                            <td>{job.title}</td>
+                            <td>{job.location}</td>
+                            <td>{job.posted_time}</td>
+                            <td><a href={job.link} target="_blank" rel="noopener noreferrer"> Apply Here</a></td>
+                        </tr>
+                    ))}
                 </tbody>
-                </Table>
+            </Table>
 
 
         </>
