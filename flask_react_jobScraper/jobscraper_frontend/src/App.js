@@ -13,6 +13,7 @@ function App() {
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/api')
             .then(response => {
+                console.log(response.data); 
                 setMessage(response.data.message);
             });
     }, []);
