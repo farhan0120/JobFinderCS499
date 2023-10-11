@@ -25,6 +25,18 @@ def fetch_from_indeed():
     response = requests.get(url, headers=headers, params=querystring)
     return response.json()
 
+def get_link_for_indeed(linkProvided):
+    url = "https://indeed12.p.rapidapi.com" + linkProvided
+    headers = {
+        "X-RapidAPI-Key": "51bdee406bmsh2bf2d53228fb173p149795jsn588550281b31",
+        "X-RapidAPI-Host": "indeed12.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    link = data.get("indeed_final_url")
+    return link
+
+
 def fetch_from_linkedin():
     url = "https://fresh-linkedin-profile-data.p.rapidapi.com/search-jobs"
     querystring = {
@@ -52,7 +64,7 @@ def process_indeed_data(data):
                 company_name=job['company_name'],
                 location=job['location'],
                 title=job['title'],
-                link=job['indeed_final_url'],
+                link=get_link_for_indeed(job['link']),
                 source='Indeed',
                 posted_time=datetime.fromtimestamp(job['pub_date_ts_milli'] / 1000),
                 # omitting optional fields for brevity
