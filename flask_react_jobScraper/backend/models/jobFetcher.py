@@ -59,6 +59,7 @@ def process_indeed_data(data):
     for job in jobs:
         existing_job = Job.query.filter_by(external_job_id=job['id']).first()
         if not existing_job:
+            #print(get_link_for_indeed(job['link']))
             new_job = Job(
                 external_job_id=job['id'],
                 company_name=job['company_name'],
