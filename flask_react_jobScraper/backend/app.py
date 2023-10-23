@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask import request
+from flask import make_response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
@@ -7,9 +8,9 @@ import os
 import logging
 
 
-
 # Initialize database without app
 db = SQLAlchemy()
+
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -21,6 +22,7 @@ class Config:
             'hours': 24
         }
     ]
+
 
 def run_fetchers_job():
     # You can put the importing inside this function to avoid circular imports
@@ -34,7 +36,10 @@ def create_app():
     Create and configure an instance of the Flask application.
     """
     app = Flask(__name__)
-    cors = CORS(app, resources={r"/api/*": {"origins": "*", "methods": "GET"}})
+    # cors = CORS(app, resources={r"/api/*": {"origins": "*", "methods": "GET"}})
+    cors = CORS(app, resources={
+                r"/api/*": {"origins": "*", "methods": ["GET", "POST"]}})
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.from_object(Config())  # load the config
@@ -47,7 +52,6 @@ def create_app():
     scheduler.init_app(app)
     scheduler.start()
 
-
     # Configure Flask's logging
     handler = logging.FileHandler('app.log')
     handler.setLevel(logging.INFO)
@@ -57,11 +61,44 @@ def create_app():
 
     return app
 
+
 app = create_app()
+
+# Define the root route
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return "Welcome to the Flask App"
+
 
 @app.route('/api', methods=['GET'])
 def hello_world():
     return jsonify(message="Hello, Flask & React!")
+
+
+reported_jobs = {}  # Store the number of reports for each job
+
+
+@app.route('/api/report-scam', methods=['POST'])
+def report_scam():
+    from models.jobsDB import Job
+    job_id = request.args.get('id')
+
+    if job_id in reported_jobs:
+        reported_jobs[job_id] += 1
+    else:
+        reported_jobs[job_id] = 1
+
+    # Check if the number of reports exceeds 5
+    if reported_jobs[job_id] >= 5:
+
+        job = Job.query.get(job_id)
+        job.is_scam = True
+        db.session.commit()
+
+    return jsonify(message="Scam reported successfully")
+
 
 @app.route('/api/search', methods=['GET'])
 def search_jobs():
@@ -69,6 +106,7 @@ def search_jobs():
     job_title = request.args.get('title')
     # Use the title to query your database and retrieve matching job listings.
     results = Job.query.filter(Job.title.like(f"%{job_title}%")).all()
+   # jobs = Job.query.filter_by(is_scam=False).all()
     # Serialize the results
     job_list = [
         {
@@ -76,11 +114,13 @@ def search_jobs():
             'company': job.company_name,
             'title': job.title,
             'location': job.location,  # Include location
-            'posted_time': job.posted_time.strftime('%Y-%m-%d %H:%M:%S') if job.posted_time else None,  # Convert datetime to string
+            # Convert datetime to string
+            'posted_time': job.posted_time.strftime('%Y-%m-%d %H:%M:%S') if job.posted_time else None,
             'link': job.link
         } for job in results
     ]
     return jsonify(job_list)
+
 
 if __name__ == '__main__':
     with app.app_context():
