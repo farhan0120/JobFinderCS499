@@ -100,14 +100,28 @@ def process_linkedin_data(data):
 
 
 
+def delete_indeed_entries():
+    # Get a list of Job entries with source='Indeed'
+    indeed_jobs = Job.query.filter_by(source='Indeed').all()
+
+    # Delete the entries
+    for job in indeed_jobs:
+        db.session.delete(job)
+
+    # Commit the changes to the database
+    db.session.commit()
+    print("Job is done")
+
 def run_fetchers():
     with app.app_context():
         indeed_data = fetch_from_indeed()
         linkedin_data = fetch_from_linkedin()
 
-    # Process and add the fetched data to the database
+    #Process and add the fetched data to the database
         process_indeed_data(indeed_data)
         process_linkedin_data(linkedin_data)
+
+        #delete_indeed_entries()
 
 if __name__ == "__main__":
     run_fetchers()
