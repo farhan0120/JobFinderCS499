@@ -77,29 +77,6 @@ def hello_world():
     return jsonify(message="Hello, Flask & React!")
 
 
-reported_jobs = {}  # Store the number of reports for each job
-
-
-@app.route('/api/report-scam', methods=['POST'])
-def report_scam():
-    from models.jobsDB import Job
-    job_id = request.args.get('id')
-
-    if job_id in reported_jobs:
-        reported_jobs[job_id] += 1
-    else:
-        reported_jobs[job_id] = 1
-
-    # Check if the number of reports exceeds 5
-    if reported_jobs[job_id] >= 5:
-
-        job = Job.query.get(job_id)
-        job.is_scam = True
-        db.session.commit()
-
-    return jsonify(message="Scam reported successfully")
-
-
 @app.route('/api/search', methods=['GET'])
 def search_jobs():
     from models.jobsDB import Job
@@ -116,10 +93,27 @@ def search_jobs():
             'location': job.location,  # Include location
             # Convert datetime to string
             'posted_time': job.posted_time.strftime('%Y-%m-%d %H:%M:%S') if job.posted_time else None,
-            'link': job.link
+            'link': job.link,
+            'report_count': job.report_count
         } for job in results
     ]
     return jsonify(job_list)
+
+
+@app.route('/api/report-scam', methods=['POST'])
+def report_scam():
+    from models.jobsDB import Job
+    job_id = request.args.get('id')
+    job = Job.query.get(job_id)
+
+    if job:
+        job.report_count += 1  # Increment the report count
+        if job.report_count >= 1:
+            job.is_scam = True
+        db.session.commit()
+        return jsonify(message="Scam reported successfully")
+    else:
+        return jsonify(message="Job ID not found"), 404
 
 
 if __name__ == '__main__':

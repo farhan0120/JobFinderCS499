@@ -1,11 +1,13 @@
 # models/jobsDB.py
+from app import db
 import sys
 sys.path.append("..")
-from app import db
+
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Auto-increment primary key
-    external_job_id = db.Column(db.String, unique=True)  # External job_id from source
+    # External job_id from source
+    external_job_id = db.Column(db.String, unique=True)
     company_name = db.Column(db.String)
     location = db.Column(db.String)
     title = db.Column(db.String)
@@ -15,6 +17,7 @@ class Job(db.Model):
     benefit = db.Column(db.String, nullable=True)  # Optional
     company_url = db.Column(db.String, nullable=True)  # Optional
     salary = db.Column(db.String, nullable=True)  # Optional
+    report_count = db.Column(db.Integer, default=0)
 
 
 def serialize(self):
@@ -29,6 +32,6 @@ def serialize(self):
         'posted_time': self.posted_time.isoformat(),
         'benefit': self.benefit,
         'company_url': self.company_url,
-        'salary': self.salary
+        'salary': self.salary,
+        'report_count': self.report_count
     }
-

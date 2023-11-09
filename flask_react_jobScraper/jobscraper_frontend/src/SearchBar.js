@@ -32,6 +32,15 @@ function SearchPage() {
       .post(`http://127.0.0.1:5000/api/report-scam?id=${jobId}`)
       .then((response) => {
         if (response.data.message === "Scam reported successfully") {
+          // Assume response.data.reportCount contains the new report count
+          setJobs((currentJobs) => {
+            return currentJobs.map((job) => {
+              if (job.id === jobId) {
+                return { ...job, reportCount: response.data.reportCount };
+              }
+              return job;
+            });
+          });
           setModalMessage(`ID ${jobId} reported as a scam successfully.`);
         }
         setShowModal(true);
@@ -147,6 +156,7 @@ function SearchPage() {
             <th>Location</th>
             <th>Time Posted</th>
             <th>Apply Link</th>
+            <th>Report Count</th>
             <th></th>
           </tr>
         </thead>
@@ -163,6 +173,7 @@ function SearchPage() {
                   Apply Now
                 </a>
               </td>
+              <td>{job.report_count}</td>
               <td>
                 {!job.isScam && (
                   <div style={{ display: "flex", alignItems: "center" }}>
