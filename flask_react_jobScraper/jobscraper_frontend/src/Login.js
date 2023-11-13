@@ -1,6 +1,7 @@
 /* global gapi */
 import React, { useEffect, useRef } from 'react';
 import './Style.css';
+import Registration from './Registration';
 
 function Login() {
   const googleSignInRef = useRef(null);
@@ -40,7 +41,7 @@ function Login() {
 
   return (
     <div className="login-box">
-      <h1>Google Sign-In</h1>
+      <Registration/>
       <div
         ref={googleSignInRef}
         id="google-signin-button"
