@@ -170,7 +170,7 @@ function SearchPage() {
               <td>{job.posted_time}</td>
               <td>
                 <a href={job.link} target="_blank" rel="noopener noreferrer">
-                  Apply Now
+                {job.link}
                 </a>
               </td>
               <td>{job.report_count}</td>
