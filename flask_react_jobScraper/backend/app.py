@@ -6,11 +6,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 import os
 import logging
-
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Initialize database without app
 db = SQLAlchemy()
 
+
+# Connect to SQLite database
+db_path = "database.db"
+conn = sqlite3.connect(db_path, check_same_thread=False)
+cursor = conn.cursor()
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -81,20 +87,27 @@ def hello_world():
 def search_jobs():
     from models.jobsDB import Job
     job_title = request.args.get('title')
-    # Use the title to query your database and retrieve matching job listings.
-    results = Job.query.filter(Job.title.like(f"%{job_title}%")).all()
-   # jobs = Job.query.filter_by(is_scam=False).all()
+    selected_state = request.args.get('state')
+
+    # Use the title and min_salary to query your database and retrieve matching job listings.
+    base_query = Job.query.filter(Job.title.like(f"%{job_title}%"))
+    
+    if selected_state:
+        # Check if the selected_state is present in the location field
+        base_query = base_query.filter(Job.location.like(f"%{selected_state}%"))
+
+    results = base_query.all()
+
     # Serialize the results
     job_list = [
         {
             'id': job.id,
             'company': job.company_name,
             'title': job.title,
-            'location': job.location,  # Include location
-            # Convert datetime to string
+            'location': job.location,
             'posted_time': job.posted_time.strftime('%Y-%m-%d %H:%M:%S') if job.posted_time else None,
             'link': job.link,
-            'report_count': job.report_count
+            'report_count': job.report_count,
         } for job in results
     ]
     return jsonify(job_list)
@@ -114,6 +127,63 @@ def report_scam():
         return jsonify(message="Scam reported successfully")
     else:
         return jsonify(message="Job ID not found"), 404
+
+
+
+# Handle user registration
+@app.route('/makeNewUser', methods=['POST'])
+def make_new_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = generate_password_hash(data.get('password'))
+
+    try:
+        existing_user = find_user(username)
+
+        if not existing_user:
+            cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+            conn.commit()
+            return jsonify(message='Registration successful'), 200
+        else:
+            return jsonify(error='Username already in use'), 409
+    except Exception as e:
+        print(e)
+        return jsonify(error='An error occurred during registration'), 500
+
+# Handle getUser
+@app.route('/getUser/<string:username>/<string:password>', methods=['GET'])
+def get_user(username, password):
+    try:
+        cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+        user = cursor.fetchone()
+
+        if user:
+            return jsonify(user=dict(id=user[0], username=user[1])), 200
+        else:
+            return jsonify(error='User not found'), 404
+    except Exception as e:
+        print(e)
+        return jsonify(error='An error occurred'), 500
+
+# Handle findUser
+@app.route('/findUser/<string:username>', methods=['GET'])
+def find_user_route(username):
+    try:
+        user = find_user(username)
+
+        if user:
+            return jsonify(user=dict(id=user[0], username=user[1])), 200
+        else:
+            return jsonify(error='User not found'), 404
+    except Exception as e:
+        print(e)
+        return jsonify(error='An error occurred'), 500
+
+# Helper function to find a user by username
+def find_user(username):
+    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+    return cursor.fetchone()
+
 
 
 if __name__ == '__main__':

@@ -9,21 +9,29 @@ import "./frontPage.css";
 
 function SearchPage() {
   const [sliderValue, setSliderValue] = useState(0);
-  const [jobTitle, setJobTitle] = useState(""); // state to capture the search input
-  const [jobs, setJobs] = useState([]); // state to store job search results
-
+  const [jobTitle, setJobTitle] = useState("");
+  const [jobs, setJobs] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [selectedState, setSelectedState] = useState(""); // Add state for the selected state
 
   const handleSliderChange = (event) => {
     setSliderValue(event.target.value);
   };
 
+
+
+  
   const handleSearch = () => {
     axios
-      .get(`http://127.0.0.1:5000/api/search?title=${jobTitle}`)
+      .get(`http://127.0.0.1:5000/api/search`, {
+        params: {
+          title: jobTitle,
+          state: selectedState, // Include selected state in the request
+        },
+      })
       .then((response) => {
-        setJobs(response.data);
+        setJobs(response.data); 
       });
   };
 
@@ -56,6 +64,64 @@ function SearchPage() {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const handleStateChange = (event) => {
+    setSelectedState(event.target.value);
+  };
+
+  const states = [
+    { abbreviation: 'AL', name: 'Alabama' },
+    { abbreviation: 'AK', name: 'Alaska' },
+    { abbreviation: 'AZ', name: 'Arizona' },
+    { abbreviation: 'AR', name: 'Arkansas' },
+    { abbreviation: 'CA', name: 'California' },
+    { abbreviation: 'CO', name: 'Colorado' },
+    { abbreviation: 'CT', name: 'Connecticut' },
+    { abbreviation: 'DE', name: 'Delaware' },
+    { abbreviation: 'FL', name: 'Florida' },
+    { abbreviation: 'GA', name: 'Georgia' },
+    { abbreviation: 'HI', name: 'Hawaii' },
+    { abbreviation: 'ID', name: 'Idaho' },
+    { abbreviation: 'IL', name: 'Illinois' },
+    { abbreviation: 'IN', name: 'Indiana' },
+    { abbreviation: 'IA', name: 'Iowa' },
+    { abbreviation: 'KS', name: 'Kansas' },
+    { abbreviation: 'KY', name: 'Kentucky' },
+    { abbreviation: 'LA', name: 'Louisiana' },
+    { abbreviation: 'ME', name: 'Maine' },
+    { abbreviation: 'MD', name: 'Maryland' },
+    { abbreviation: 'MA', name: 'Massachusetts' },
+    { abbreviation: 'MI', name: 'Michigan' },
+    { abbreviation: 'MN', name: 'Minnesota' },
+    { abbreviation: 'MS', name: 'Mississippi' },
+    { abbreviation: 'MO', name: 'Missouri' },
+    { abbreviation: 'MT', name: 'Montana' },
+    { abbreviation: 'NE', name: 'Nebraska' },
+    { abbreviation: 'NV', name: 'Nevada' },
+    { abbreviation: 'NH', name: 'New Hampshire' },
+    { abbreviation: 'NJ', name: 'New Jersey' },
+    { abbreviation: 'NM', name: 'New Mexico' },
+    { abbreviation: 'NY', name: 'New York' },
+    { abbreviation: 'NC', name: 'North Carolina' },
+    { abbreviation: 'ND', name: 'North Dakota' },
+    { abbreviation: 'OH', name: 'Ohio' },
+    { abbreviation: 'OK', name: 'Oklahoma' },
+    { abbreviation: 'OR', name: 'Oregon' },
+    { abbreviation: 'PA', name: 'Pennsylvania' },
+    { abbreviation: 'RI', name: 'Rhode Island' },
+    { abbreviation: 'SC', name: 'South Carolina' },
+    { abbreviation: 'SD', name: 'South Dakota' },
+    { abbreviation: 'TN', name: 'Tennessee' },
+    { abbreviation: 'TX', name: 'Texas' },
+    { abbreviation: 'UT', name: 'Utah' },
+    { abbreviation: 'VT', name: 'Vermont' },
+    { abbreviation: 'VA', name: 'Virginia' },
+    { abbreviation: 'WA', name: 'Washington' },
+    { abbreviation: 'WV', name: 'West Virginia' },
+    { abbreviation: 'WI', name: 'Wisconsin' },
+    { abbreviation: 'WY', name: 'Wyoming' },
+    
+  ];
 
   return (
     <>
@@ -95,29 +161,7 @@ function SearchPage() {
             <Accordion.Header>Job Filters (Optional)</Accordion.Header>
             <Accordion.Body>
               <Form>
-                <Form.Label>Salary</Form.Label>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 8,
-                  }}
-                >
-                  <span>$0</span>
-                  <span>$300,000</span>
-                </div>
-
-                <Form.Range
-                  min="0"
-                  max="300000"
-                  step="5000"
-                  value={sliderValue}
-                  onChange={handleSliderChange}
-                />
-
-                <div style={{ textAlign: "center", marginTop: 8 }}>
-                  Selected Salary: ${sliderValue}
-                </div>
+                
 
                 <Form.Group className="mb-3">
                   <Form.Label>Position Levels</Form.Label>
@@ -141,6 +185,23 @@ function SearchPage() {
                   <Form.Check type="checkbox" id="Hybrid" label="Hybrid" />
                   <Form.Check type="checkbox" id="inoffice" label="In-Office" />
                 </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Select State</Form.Label>
+                  <Form.Select
+                    id="state"
+                    value={selectedState}
+                    onChange={handleStateChange}
+                  >
+                    <option value="">Select State</option>
+                    {states.map((state) => (
+                      <option key={state.abbreviation} value={state.abbreviation}>
+                        {state.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
               </Form>
             </Accordion.Body>
           </Accordion.Item>
@@ -204,3 +265,42 @@ function SearchPage() {
 }
 
 export default SearchPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
