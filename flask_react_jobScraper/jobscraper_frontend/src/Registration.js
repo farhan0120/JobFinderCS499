@@ -1,123 +1,124 @@
 import React, { useState } from 'react';
-import {useHistory} from 'react-router-dom';
-import './Style.css';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
+import './login.css';
 
+function Registration() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const history = useHistory();
 
-function Registration()
-{
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    let [error, setError] = useState('');
-    const history = useHistory();
-    const apiUrl = 'http://127.0.0.1:5000';
-    async function checkLogin(){
-        let response = await fetch(`${apiUrl}/getUser/${username}/${password}`)
-        let responseJson = await response.json().catch(error => {
-            setError('wrong username and password');
-            console.log(error)
+  const checkLogin = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/getUser/${username}/${password}`);
+      if (response.status === 200) {
+        localStorage.setItem('username', username);
+        history.push('');
+      } else {
+        setError('Error during login');
+      }
+    }catch(error){
+      setError('An error occurred during login');
+      console.error(error);
+    }
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    if (username === '' && password === '') {
+      setError('Error: Username and Password cannot be empty');
+      return;
+    } else if (username === '') {
+      setError('Error: Username cannot be empty');
+      return;
+    } else if (password === '') {
+      setError('Error: Password cannot be empty');
+      return;
+    }
+    checkLogin();
+  };
+
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+
+    setError('');
+
+    if (username === '' && email === '' && password === '') {
+        setError('Error: Username, Email, and Password cannot be empty');
+        return;
+    }else if (username === '') {
+        setError('Error: Username cannot be empty');
+        return;
+    }else if (email === '') {
+        setError('Error: Email cannot be empty');
+        return;
+    }else if (password === '') {
+        setError('Error: Password cannot be empty');
+        return;
+    }
+
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/findUser/${username}`);
+      const data = response.data;
+
+      if (data.error) {
+        const request = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, email: email, password: password }),
+        };
+
+        const registrationResponse = await axios.post('http://127.0.0.1:5000/makeNewUser', {
+          username: username,
+          email: email,
+          password: password,
         });
-        if(responseJson){
-            localStorage.setItem("username", username);
-            history.push('')
-        }
-    }
-    const handleLogin= (event)=>
-    {
-        event.preventDefault();  
-        if(username === '' && password === '')
-        {
-            setError('Error: Username and Password cannot be empty'); // set error message
-            return;
-        }else if(username === ''){
-            setError('Error: Username cannot be empty'); // set error message
-            return;
-        }else if(password === ''){
-            setError('Error: Password cannot be empty'); // set error message
-            return;
-        }
-        checkLogin();
-  
-    }
- 
-    async function handleSignUp(event){
-        event.preventDefault();
-        
-        //clear any previous error messages
-        setError('');
 
-
-        //validate input fields
-        if(username === '' && password === '')
-        {
-            setError('Error: Username and Password cannot be empty'); // set error message
-            return;
-        }else if(username === ''){
-            setError('Error: Username cannot be empty'); // set error message
-            return;
-        }else if(password === ''){
-            setError('Error: Password cannot be empty'); // set error message
-            return;
-        }
-        //check if the username already exists
-        try {
-            const response = await fetch(`${apiUrl}/findUser/${username}`);
-            const data = await response.json();
-
-
-            if (data.error) {
-            //if the username is not found, proceed with registration
-            const request = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username, password: password }),
-            };
-
-        const registrationResponse = await fetch(`${apiUrl}/makeNewUser`, request);
-        if (registrationResponse.ok) {
-            //registration was successful
-            localStorage.setItem("username", username);
-            history.push('/');
+        if (registrationResponse.status === 200) {
+          localStorage.setItem('username', username);
+          history.push('/');
         } else {
-            setError('an error occurred during registration');
+          setError('An error occurred during registration');
         }
-        } else {
+      } else {
         setError('Username already in use');
-        }
-        }catch (error){
-            setError('an error occurred during registration');
-            console.error(error);
-        }
+      }
+    } catch (error) {
+      setError('An error occurred during registration');
+      console.error(error);
     }
+  };
 
-
-    return (
+  return (
     <div className="Login">
-    <font id ="loginTitle"><h1 >Sign In</h1></font>
-    <form id ="loginBox">
+      <font id="loginTitle">
+        <h1>Sign In</h1>
+      </font>
+      <form id="loginBox">
         {error && <p className="error">{error}</p>}
-        {/* show error message if there is an error */}
         <label>
-        Username:
-        <input
-            type="text"
-            value={username}
-            onChange={event => setUsername(event.target.value)}
-        />
+          Username:
+          <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} />
         </label>
         <label>
-        Password:
-        <input
-            type="password"
-            value={password}
-            onChange={event => setPassword(event.target.value)}
-        />
+          Email:
+          <input type="text" value={email} onChange={(event) => setEmail(event.target.value)} />
         </label>
-        <button onClick = {handleLogin} type="submit">Login</button>
-        <button onClick = {handleSignUp} type="submit">Sign Up</button>
-    </form>
+        <label>
+          Password:
+          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+        </label>
+        <button onClick={handleLogin} type="submit">
+          Login
+        </button>
+        <button onClick={handleSignUp} type="submit">
+          Sign Up
+        </button>
+      </form>
     </div>
-    );
-    }
-
+  );
+}
 
 export default Registration;

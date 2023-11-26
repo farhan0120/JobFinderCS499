@@ -3,7 +3,6 @@ from app import db
 import sys
 sys.path.append("..")
 
-
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Auto-increment primary key
     # External job_id from source

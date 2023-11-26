@@ -12,7 +12,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Initialize database without app
 db = SQLAlchemy()
 
-
 # Connect to SQLite database
 db_path = "database.db"
 conn = sqlite3.connect(db_path, check_same_thread=False)
@@ -43,8 +42,11 @@ def create_app():
     """
     app = Flask(__name__)
     # cors = CORS(app, resources={r"/api/*": {"origins": "*", "methods": "GET"}})
-    cors = CORS(app, resources={
-                r"/api/*": {"origins": "*", "methods": ["GET", "POST"]}})
+    CORS(app, resources={
+                r"/api/*": {"origins": "*", "methods": ["GET", "POST"]},
+                r"/getUser/*": {"origins": "*", "methods": ["GET"]},
+                r"/findUser/*": {"origins": "*", "methods": ["GET"]},
+                r"/makeNewUser": {"origins": "*", "methods": ["POST"]}})
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -129,10 +131,10 @@ def report_scam():
         return jsonify(message="Job ID not found"), 404
 
 
-
 # Handle user registration
 @app.route('/makeNewUser', methods=['POST'])
 def make_new_user():
+    from models.userDB import User
     data = request.get_json()
     username = data.get('username')
     password = generate_password_hash(data.get('password'))
@@ -153,6 +155,7 @@ def make_new_user():
 # Handle getUser
 @app.route('/getUser/<string:username>/<string:password>', methods=['GET'])
 def get_user(username, password):
+    from models.userDB import User
     try:
         cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
         user = cursor.fetchone()
@@ -168,6 +171,7 @@ def get_user(username, password):
 # Handle findUser
 @app.route('/findUser/<string:username>', methods=['GET'])
 def find_user_route(username):
+    from models.userDB import User
     try:
         user = find_user(username)
 
@@ -181,6 +185,7 @@ def find_user_route(username):
 
 # Helper function to find a user by username
 def find_user(username):
+    from models.userDB import User
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     return cursor.fetchone()
 

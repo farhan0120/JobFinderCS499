@@ -1,6 +1,6 @@
 /* global gapi */
 import React, { useEffect, useRef } from 'react';
-import './Style.css';
+import './login.css';
 import Registration from './Registration';
 
 function Login() {
